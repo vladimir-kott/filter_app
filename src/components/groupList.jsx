@@ -1,6 +1,8 @@
 import React from "react"
+import PropTypes from "prop-types"
 
-const GroupList = () => {
+const GroupList = ({items}) => {
+    console.log(items)
     return (
     <ul className="list-group">
         <li className="list-group-item">Cras justo odio</li>
@@ -9,6 +11,9 @@ const GroupList = () => {
         <li className="list-group-item">Porta ac consectetur ac</li>
         <li className="list-group-item">Vestibulum at eros</li>
     </ul>)
+}
+GroupList.propTypes={
+    items:PropTypes.object.isRequired
 }
 
 export default GroupList
