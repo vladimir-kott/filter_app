@@ -2,35 +2,57 @@ import React, { useState, useEffect } from "react"
 import { paginate } from "../api/utils/paginate"
 import Pagination from "./pagination"
 import User from "./user"
+import SearchStatus from "./searchStatus";
 import GroupList from "./groupList"
 import api from "../api"
 
 const Users = ({ users, ...rest }) => {
-    const count = users.length
-    const pageSize = 4
+    const pageSize = 2
+
+    const [currentPage, setCurrentPage] = useState(1)
+    const [professions, setProfessions] = useState(/*api.professions.fetchAll()*/)
+    const [selectedProf, setSelectedProf] = useState()
+
     useEffect(() => {
         api.professions.fetchAll().then(data => setProfessions(data))
     }, [])
 
-    const [currentPage, setCurrentPage] = useState(1)
-    const [professions, setProfessions] = useState(api.professions.fetchAll())
+    useEffect(() => {
+        setCurrentPage(1)
+    }, selectedProf)
 
-    const handleProfessionSelect = (params) => {
-        console.log(params)
+    const handleProfessionSelect = item => {
+        /*console.log(params)*/
+        setSelectedProf(item)
     }
 
     const handlePageChange = (pageIndex) => {
         /*console.log('pageIndex', pageIndex)*/
         setCurrentPage(pageIndex)
     }
+
+    const clearFilter = () => {
+        setSelectedProf()
+    }
     
-    const userCrop = paginate(users, currentPage, pageSize)
+
+    const filteredUsers = selectedProf ? users.filter((user) => user.profession === selectedProf):users
+    const count = filteredUsers.length
+    const userCrop = paginate(filteredUsers, currentPage, pageSize)
+
     return (
-        <>
-        {professions && <GroupList 
-                            items = {professions} 
+        <div className="d-flex">
+        {professions && (<div className="d-flex flex-column flex-shrink-0 p-3">
+                        <GroupList 
+                            selectedItem = {selectedProf}
+                            items = {professions}
                             onItemSelect = {handleProfessionSelect}
-                        />}
+                        />
+                        <button className="btn btn-secondary mt-2" onClick={clearFilter}>Очистить</button>
+                        </div>
+                    )}
+            <div className="d-flex flex-column">
+            <SearchStatus length={count} />
             {count > 0 && (
                 <table className="table">
                     <thead>
@@ -51,8 +73,11 @@ const Users = ({ users, ...rest }) => {
                     </tbody>
                 </table>
             )}
-            <Pagination itemCount={count} pageSize = {pageSize} currentPage = {currentPage} onPageChange = {handlePageChange}/>
-        </>
+            <div className="d-flex justify-content-center">
+                <Pagination itemCount={count} pageSize = {pageSize} currentPage = {currentPage} onPageChange = {handlePageChange}/>
+            </div>
+            </div>
+        </div>
     );
 };
 
