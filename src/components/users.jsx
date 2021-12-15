@@ -19,10 +19,10 @@ const Users = ({ users, ...rest }) => {
 
     useEffect(() => {
         setCurrentPage(1)
-    }, selectedProf)
+    }, [selectedProf])
 
     const handleProfessionSelect = item => {
-        /*console.log(params)*/
+        /*console.log(item)*/
         setSelectedProf(item)
     }
 
@@ -35,9 +35,11 @@ const Users = ({ users, ...rest }) => {
         setSelectedProf()
     }
     
-
-    const filteredUsers = selectedProf ? users.filter((user) => user.profession === selectedProf):users
+    /*console.log('selectedProf', selectedProf)
+    console.log('users', users)*/
+    const filteredUsers = selectedProf ? users.filter((user) => user.profession._id === selectedProf._id):users
     const count = filteredUsers.length
+    /*console.log(filteredUsers)*/
     const userCrop = paginate(filteredUsers, currentPage, pageSize)
 
     return (
